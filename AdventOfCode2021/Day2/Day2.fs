@@ -5,7 +5,7 @@ open System.IO
 let input = File.ReadAllLines("Day2/input.txt")
 
 module Puzzle3 = 
-    let result = 
+    let solve (input: string seq) = 
         input
         |> Seq.map (fun l -> l.Split(" "))
         |> Seq.map (fun a -> (a[0], int a[1]))
@@ -19,6 +19,8 @@ module Puzzle3 =
         )
         |> Seq.fold (fun (x, y) (dx, dy) -> (x + dx, y + dy)) (0, 0)
         |> fun (x, y) -> x * y
+
+    let result = solve input
 
 module Puzzle4 = 
     type Command = 
@@ -41,7 +43,6 @@ module Puzzle4 =
 
     type SubmarineState = { HorizontalPosition: int; Depth: int; Aim: int; }
 
-    let initSubmarineState = { HorizontalPosition = 0; Depth = 0; Aim = 0; }
     let applyCommand state command =
         match command with
         | Forword x -> 
@@ -51,9 +52,13 @@ module Puzzle4 =
         | Down x -> { state with Aim = state.Aim + x }
         | Up x -> { state with Aim = state.Aim - x }
 
-    let result =
+    let solve input = 
+        let initSubmarineState = { HorizontalPosition = 0; Depth = 0; Aim = 0; }
+
         input
         |> Seq.map parseCommand
         |> Seq.fold applyCommand initSubmarineState
         |> (fun state -> state.HorizontalPosition * state.Depth)
+
+    let result = solve input
         

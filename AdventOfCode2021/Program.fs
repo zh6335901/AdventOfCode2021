@@ -2,8 +2,8 @@
 open Day2
 open Day3
 
-printfn "%d" Puzzle1.count
-printfn "%d" Puzzle2.count
+printfn "%d" Puzzle1.reuslt
+printfn "%d" Puzzle2.result
 
 printfn "%d" Puzzle3.result
 printfn "%d" Puzzle4.result
