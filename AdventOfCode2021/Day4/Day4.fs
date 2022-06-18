@@ -3,22 +3,9 @@
 open System
 open System.IO;
 
-let input = File.ReadAllText("Day4/input.txt")
-let regions = input.Split("\r\n\r\n")
+type Board = { Rows: Set<string> array; Cols: Set<string> array; Bingo: bool }
 
-let splitStr (separtor: string) (str: string) 
-    = str.Split(separtor, StringSplitOptions.RemoveEmptyEntries) 
-
-let drawnInput = regions[0]
-let boardInputs = 
-    regions 
-    |> Array.skip 1
-    |> Array.map (fun m -> m.Split("\r\n"))
-    |> Array.map (fun m -> m |> Array.map (fun x -> x |> splitStr " "))
-
-module Puzzle7 = 
-    type Board = { Rows: Set<string> array; Cols: Set<string> array; Bingo: bool }
-
+module private Board = 
     let toBoard (input: string[][]) = 
         let (m, n) = (input.Length, input[0].Length)
         let martix = Array2D.init m n (fun i j -> input[i][j])
@@ -45,7 +32,7 @@ module Puzzle7 =
 
         { Rows = rows; Cols = cols; Bingo = bingo }
 
-    let calcBoard board lastNum =
+    let calcBoard lastNum board =
         let calcRow row = 
             row 
             |> Set.toArray
@@ -59,23 +46,51 @@ module Puzzle7 =
         
         sum * (int lastNum)
 
-    let rec calc boards drawnNumbers = 
+module private TestData =
+    let input = File.ReadAllText("Day4/input.txt")
+    let regions = input.Split("\r\n\r\n")
+
+    let splitStr (separtor: string) (str: string) 
+        = str.Split(separtor, StringSplitOptions.RemoveEmptyEntries) 
+
+    let drawnInput = regions[0]
+    let boardInputs = 
+        regions 
+        |> Array.skip 1
+        |> Array.map (fun m -> m.Split("\r\n"))
+        |> Array.map (fun m -> m |> Array.map (fun x -> x |> splitStr " "))
+
+    let boards = boardInputs |> Array.map Board.toBoard
+    let drawnNumbers = 
+        drawnInput
+        |> splitStr ","
+        |> List.ofArray
+
+module Puzzle7 = 
+    open Board
+
+    let rec solve drawnNumbers boards = 
         match drawnNumbers with
         | cur :: rest -> 
             let nextBoards = boards |> Array.map (markBoard cur)              
             let winner = nextBoards |> Array.tryFind (fun b -> b.Bingo)
             match winner with
-            | Some x -> calcBoard x cur
-            | None -> calc nextBoards rest 
+            | Some x -> calcBoard cur x
+            | None -> solve rest nextBoards
         | _ -> 0
 
-    let solve drawnInput boardInputs =
-        let boards = boardInputs |> Array.map toBoard
-        let drawnNumbers = 
-            drawnInput
-            |> splitStr ","
-            |> List.ofArray
+    let result = solve TestData.drawnNumbers TestData.boards
 
-        calc boards drawnNumbers
+module Puzzle8 = 
+    open Board
 
-    let result = solve drawnInput boardInputs
+    let rec solve drawnNumbers boards = 
+        match drawnNumbers with
+        | cur :: rest -> 
+            let nextBoards = boards |> Array.map (markBoard cur)              
+            match nextBoards with
+            | x when x.Length = 1 && x[0].Bingo = true -> calcBoard cur x[0]
+            | _ -> nextBoards |> Array.filter (fun b -> b.Bingo = false) |> solve rest 
+        | _ -> 0
+
+    let result = solve TestData.drawnNumbers TestData.boards

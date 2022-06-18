@@ -13,3 +13,4 @@ printfn "%d" Puzzle5.result
 printfn "%d" Puzzle6.result
 
 printfn "%d" Puzzle7.result
+printfn "%d" Puzzle8.result
