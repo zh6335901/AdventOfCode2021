@@ -2,7 +2,8 @@
 
 open System.IO
 
-let input = File.ReadAllLines("Day2/input.txt")
+module private TestData =
+    let input = File.ReadAllLines("Day2/input.txt")
 
 module Puzzle3 = 
     let solve (input: string seq) = 
@@ -20,7 +21,7 @@ module Puzzle3 =
         |> Seq.fold (fun (x, y) (dx, dy) -> (x + dx, y + dy)) (0, 0)
         |> fun (x, y) -> x * y
 
-    let result = solve input
+    let result = solve TestData.input
 
 module Puzzle4 = 
     type Command = 
@@ -60,5 +61,5 @@ module Puzzle4 =
         |> Seq.fold applyCommand initSubmarineState
         |> (fun state -> state.HorizontalPosition * state.Depth)
 
-    let result = solve input
+    let result = solve TestData.input
         

@@ -3,7 +3,8 @@
 open System.IO
 open System
 
-let input = File.ReadAllLines("Day3/input.txt")
+module private TestData =
+    let input = File.ReadAllLines("Day3/input.txt")
 
 module Puzzle5 =
     let solve (input: string array) =
@@ -32,7 +33,7 @@ module Puzzle5 =
 
         gammaNum * epsilonNum
 
-    let result = solve input
+    let result = solve TestData.input
 
 module Puzzle6 =
     type Report = { Position: int; Numbers: seq<string> }
@@ -72,4 +73,4 @@ module Puzzle6 =
 
         oxygenRating * co2Rating
 
-    let result = solve input
+    let result = solve TestData.input

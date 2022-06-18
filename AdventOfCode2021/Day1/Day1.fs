@@ -2,7 +2,8 @@
 
 open System.IO
 
-let input = File.ReadAllLines("Day1/input.txt")
+module private TestData =
+    let input = File.ReadAllLines("Day1/input.txt")
 
 module Puzzle1 =
     let isIncrease (n1, n2) = n2 > n1
@@ -13,7 +14,7 @@ module Puzzle1 =
         |> Seq.filter isIncrease
         |> Seq.length
 
-    let reuslt = solve input
+    let reuslt = solve TestData.input
 
 module Puzzle2 =
     let isIncrease (n1, n2) = (Seq.head n1) < (Seq.last n2)
@@ -25,4 +26,4 @@ module Puzzle2 =
         |> Seq.filter isIncrease
         |> Seq.length
 
-    let result = solve input
+    let result = solve TestData.input
