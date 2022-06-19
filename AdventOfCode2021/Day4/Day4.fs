@@ -6,9 +6,9 @@ open System.IO;
 type Board = { Rows: Set<string> array; Cols: Set<string> array; Bingo: bool }
 
 module private Board = 
-    let toBoard (input: string[][]) = 
-        let (m, n) = (input.Length, input[0].Length)
-        let martix = Array2D.init m n (fun i j -> input[i][j])
+    let ofStringTable (table: string[][]) = 
+        let (m, n) = (table.Length, table[0].Length)
+        let martix = Array2D.init m n (fun i j -> table[i][j])
 
         let rows = 
             [|1..m|] 
@@ -22,7 +22,7 @@ module private Board =
 
         { Rows = rows; Cols = cols; Bingo = false }
 
-    let markBoard num board = 
+    let mark num board = 
         let rows = board.Rows |> Array.map (fun r -> r |> Set.remove num)
         let cols = board.Cols |> Array.map (fun c -> c |> Set.remove num)
         let bingo = 
@@ -32,7 +32,7 @@ module private Board =
 
         { Rows = rows; Cols = cols; Bingo = bingo }
 
-    let calcBoard lastNum board =
+    let calc lastNum board =
         let calcRow row = 
             row 
             |> Set.toArray
@@ -60,19 +60,17 @@ module private TestData =
         |> Array.map (fun m -> m.Split("\r\n"))
         |> Array.map (fun m -> m |> Array.map (fun x -> x |> splitStr " "))
 
-    let boards = boardInputs |> Array.map Board.toBoard
+    let boards = boardInputs |> Array.map Board.ofStringTable
     let drawnNumbers = 
         drawnInput
         |> splitStr ","
         |> List.ofArray
 
 module Puzzle7 = 
-    open Board
-
     let rec solve drawnNumbers boards = 
         match drawnNumbers with
         | cur :: rest -> 
-            let nextBoards = boards |> Array.map (markBoard cur)              
+            let nextBoards = boards |> Array.map (Board.mark cur)              
             let winner = nextBoards |> Array.tryFind (fun b -> b.Bingo)
             match winner with
             | Some x -> calcBoard cur x
@@ -87,9 +85,9 @@ module Puzzle8 =
     let rec solve drawnNumbers boards = 
         match drawnNumbers with
         | cur :: rest -> 
-            let nextBoards = boards |> Array.map (markBoard cur)              
+            let nextBoards = boards |> Array.map (mark cur)              
             match nextBoards with
-            | x when x.Length = 1 && x[0].Bingo = true -> calcBoard cur x[0]
+            | x when x.Length = 1 && x[0].Bingo = true -> calc cur x[0]
             | _ -> nextBoards |> Array.filter (fun b -> b.Bingo = false) |> solve rest 
         | _ -> 0
 
