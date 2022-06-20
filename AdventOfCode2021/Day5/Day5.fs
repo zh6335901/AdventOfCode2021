@@ -41,3 +41,29 @@ module Puzzle9 =
         |> Array.length
 
     let result = solve TestData.lines
+
+module Puzzle10 = 
+    let generatePoints { P1 = (x1, y1); P2 = (x2, y2) } = 
+        let isCardinal = x1 = x2 || y1 = y2
+        let minX, maxX = Math.Min(x1, x2), Math.Max(x1, x2)
+
+        if isCardinal then
+            let minY, maxY = Math.Min(y1, y2), Math.Max(y1, y2)
+            [| for x in minX..maxX do
+                for y in minY..maxY -> (x, y) |]
+        else 
+            let slope = (y2 - y1) / (x2 - x1)
+            let constant = slope * -x1 + y1
+            [| for x in minX..maxX -> (x, slope * x + constant)|]
+
+    let solve lines = 
+        lines 
+        |> Array.map generatePoints
+        |> Array.collect id
+        |> Array.countBy id
+        |> Array.filter (fun (_, count) -> count >= 2)
+        |> Array.length
+
+    let points = generatePoints { P1 = (9, 7); P2 = (7, 9) }
+
+    let result = solve TestData.lines
