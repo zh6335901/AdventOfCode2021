@@ -73,21 +73,19 @@ module Puzzle7 =
             let nextBoards = boards |> Array.map (Board.mark cur)              
             let winner = nextBoards |> Array.tryFind (fun b -> b.Bingo)
             match winner with
-            | Some x -> calcBoard cur x
+            | Some x -> Board.calc cur x
             | None -> solve rest nextBoards
         | _ -> 0
 
     let result = solve TestData.drawnNumbers TestData.boards
 
 module Puzzle8 = 
-    open Board
-
     let rec solve drawnNumbers boards = 
         match drawnNumbers with
         | cur :: rest -> 
-            let nextBoards = boards |> Array.map (mark cur)              
+            let nextBoards = boards |> Array.map (Board.mark cur)              
             match nextBoards with
-            | x when x.Length = 1 && x[0].Bingo = true -> calc cur x[0]
+            | x when x.Length = 1 && x[0].Bingo = true -> Board.calc cur x[0]
             | _ -> nextBoards |> Array.filter (fun b -> b.Bingo = false) |> solve rest 
         | _ -> 0
 
