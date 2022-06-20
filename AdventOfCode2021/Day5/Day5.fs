@@ -54,7 +54,7 @@ module Puzzle10 =
         else 
             let slope = (y2 - y1) / (x2 - x1)
             let constant = slope * -x1 + y1
-            [| for x in minX..maxX -> (x, slope * x + constant)|]
+            [| for x in minX..maxX -> (x, slope * x + constant) |]
 
     let solve lines = 
         lines 
@@ -63,7 +63,5 @@ module Puzzle10 =
         |> Array.countBy id
         |> Array.filter (fun (_, count) -> count >= 2)
         |> Array.length
-
-    let points = generatePoints { P1 = (9, 7); P2 = (7, 9) }
 
     let result = solve TestData.lines
