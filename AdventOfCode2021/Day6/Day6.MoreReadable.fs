@@ -1,4 +1,4 @@
-﻿module Day6.MoreReadable
+﻿module Day6MoreReadable
 
 open System.IO
 
@@ -7,49 +7,43 @@ type FishCount = FishCount of int64
 type State = Map<Timer, FishCount>
 
 module private TestData = 
-    let input = File.ReadAllText("Day6/input.txt")
+    let input = "3,4,3,1,2"//File.ReadAllText("Day6/input.txt")
 
     let initState = 
         input.Split(",") 
         |> Array.map int
         |> Array.groupBy id
-        |> Array.map (fun (k, g) -> Timer k, FishCount (g |> Array.length |> int64))
+        |> Array.map (fun (t, g) -> Timer t, FishCount (g |> Array.length |> int64))
         |> Map.ofArray
 
-let nextDay (state: State): State = 
-    let parentFishCount = 
-        state
-        |> Map.tryFind (Timer 0)
-        |> Option.defaultValue (FishCount 0)
+module private Timing = 
+    let private (@+@) (FishCount c1) (FishCount c2) = FishCount (c1 + c2) 
 
-    let tickDown (Timer t) = 
-        if t = 0 then Timer 6
-        else Timer (t - 1)
+    let nextDay (state: State): State = 
+        let countOf (timerValue: int) = 
+            state
+            |> Map.tryFind (Timer timerValue)
+            |> Option.defaultValue (FishCount 0)
 
-    let reducer (t, FishCount count1) (_, FishCount count2): (Timer * FishCount) = 
-        (t, FishCount (count1 + count2))
-
-    let next = 
-        state 
-        |> Map.toList
-        |> List.map (fun (timer, count) -> (tickDown timer, count))
-        |> List.groupBy (fun s -> fst s)
-        |> List.map (fun (_, g) -> g |> List.reduce reducer)
-
-    if parentFishCount = FishCount 0 then
-        next |> Map.ofList
-    else
-        (Timer 8, parentFishCount) :: next |> Map.ofList
-
-let rec nextDays state days = 
-    if days = 0 then 
-        state
-    else 
-        let nextState = nextDay state
-        nextDays nextState (days - 1)
+        [0..8]
+        |> List.map (
+            fun t -> 
+                match t with
+                | 8 -> (Timer 8, countOf 0)
+                | 6 -> (Timer 6, (countOf 0) @+@ (countOf 7))
+                | _ -> (Timer t, countOf (t + 1))
+        )
+        |> Map.ofList
+    
+    let rec nextDays state days = 
+        match days with
+        | 0 -> state
+        | _ ->         
+            let nextState = nextDay state
+            nextDays nextState (days - 1)
 
 let solve state days = 
-    nextDays state days 
+    Timing.nextDays state days 
     |> Map.toSeq 
     |> Seq.sumBy (fun (_, FishCount c) -> c)
 

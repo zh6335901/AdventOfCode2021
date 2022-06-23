@@ -3,7 +3,7 @@ open Day2
 open Day3
 open Day4
 open Day5
-open Day6
+open Day6MoreReadable
 
 printfn "%d" Puzzle1.reuslt
 printfn "%d" Puzzle2.result
