@@ -38,7 +38,7 @@ module Puzzle14 =
         grabs 
         |> Array.map double 
         |> Array.average
-        |> (fun avg -> (Math.Ceiling(avg) |> int, Math.Floor(avg) |> int))
+        |> (fun avg -> int avg, (int avg) + 1)
         |> (fun (l, r) -> [l |> sumCost; r |> sumCost])
         |> Seq.min
 
