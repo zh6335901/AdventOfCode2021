@@ -9,11 +9,14 @@ module private TestData =
 
 module Puzzle13 = 
     let solve grabs = 
-        let sortedGrabs = grabs |> Array.sort
-        let bestPos = sortedGrabs |> Array.item (sortedGrabs.Length / 2)
         let abs (num: int) = Math.Abs(num)
 
-        sortedGrabs
+        let bestPos = 
+            grabs 
+            |> Array.sort 
+            |> Array.item (grabs.Length / 2)
+
+        grabs
         |> Array.map (fun p -> (p - bestPos) |> abs)
         |> Array.sum
          
