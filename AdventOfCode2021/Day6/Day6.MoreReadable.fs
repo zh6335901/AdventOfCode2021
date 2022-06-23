@@ -7,7 +7,7 @@ type FishCount = FishCount of int64
 type State = Map<Timer, FishCount>
 
 module private TestData = 
-    let input = "3,4,3,1,2"//File.ReadAllText("Day6/input.txt")
+    let input = File.ReadAllText("Day6/input.txt")
 
     let initState = 
         input.Split(",") 
