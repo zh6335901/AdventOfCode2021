@@ -20,7 +20,7 @@ module private Timing =
     let private (@+@) (FishCount c1) (FishCount c2) = FishCount (c1 + c2) 
 
     let nextDay (state: State): State = 
-        let countOf (timerValue: int) = 
+        let getFishCount (timerValue: int) = 
             state
             |> Map.tryFind (Timer timerValue)
             |> Option.defaultValue (FishCount 0)
@@ -29,9 +29,9 @@ module private Timing =
         |> List.map (
             fun t -> 
                 match t with
-                | 8 -> (Timer 8, countOf 0)
-                | 6 -> (Timer 6, (countOf 0) @+@ (countOf 7))
-                | _ -> (Timer t, countOf (t + 1))
+                | 8 -> (Timer 8, getFishCount 0)
+                | 6 -> (Timer 6, (getFishCount 0) @+@ (getFishCount 7))
+                | _ -> (Timer t, getFishCount (t + 1))
         )
         |> Map.ofList
     
