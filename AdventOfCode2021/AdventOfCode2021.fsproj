@@ -22,15 +22,19 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Compile Include="Day4\Day4.fs" />
-    <Compile Include="Day5\Day5.fs" />
     <Content Include="Day5\input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Compile Include="Day5\Day5.fs" />
     <Content Include="Day6\input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Compile Include="Day6\Day6.MoreReadable.fs" />
     <Compile Include="Day6\Day6.fs" />
+    <Content Include="Day7\input.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Compile Include="Day7\Day7.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
