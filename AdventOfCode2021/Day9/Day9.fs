@@ -10,16 +10,16 @@ module private TestData =
         input
         |> Array.map (fun s -> s.ToCharArray() |> Array.map (fun c -> int c - int '0'))
 
-let adjacent x y (heightMap: int[][]) = 
+let adjacent (heightMap: int[][]) x y = 
     let m, n = heightMap.Length, heightMap[0].Length
 
     [|(x - 1, y); (x + 1, y); (x, y - 1); (x, y + 1)|]
     |> Array.filter (fun (r, c) -> r >= 0 && r < m && c >= 0 && c < n)
 
-let isLowPoint x y (heightMap: int[][]) = 
+let isLowPoint (heightMap: int[][]) x y = 
     let v = heightMap[x][y]
     let distances = 
-        (adjacent x y heightMap) 
+        (adjacent heightMap x y) 
         |> Array.map (fun (r, c) -> v - heightMap[r][c])
 
     Array.TrueForAll(distances, fun d -> d < 0)
@@ -28,7 +28,7 @@ let getLowPoints (heightMap: int[][]) =
     let m, n = heightMap.Length, heightMap[0].Length   
     let lowPoints = 
         [|for i in 0..(m - 1) do 
-            for j in 0..(n - 1) -> (i, j, isLowPoint i j heightMap) |]
+            for j in 0..(n - 1) -> (i, j, isLowPoint heightMap i j) |]
         |> Array.filter (fun (_, _, d) -> d)
         |> Array.map (fun (i, j, _) -> i, j)
 
@@ -49,7 +49,7 @@ module Puzzle18 =
         else
             let curBasin = basin |> Set.add (x, y)
             let finalBasin = 
-                adjacent x y heightMap
+                adjacent heightMap x y
                 |> Array.filter (fun (r, c) -> heightMap[r][c] <> 9)
                 |> Array.fold (fun b (r, c) -> expandBasin heightMap b r c) curBasin
 
