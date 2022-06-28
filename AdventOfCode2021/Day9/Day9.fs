@@ -43,32 +43,30 @@ module Puzzle17 =
     let result = solve TestData.hegihtMap
 
 module Puzzle18 =
-    let mutable visited = Set<int * int> []
-
-    let rec countOfBasins x y (heightMap: int[][]) = 
-        if Set.contains (x, y) visited then 
-            0
+    let rec expandBasin (heightMap: int[][]) basin x y  = 
+        if basin |> Set.contains (x, y)  then 
+            basin
         else
-            visited <- Set.add (x, y) visited
-            let sum = 
+            let curBasin = basin |> Set.add (x, y)
+            let finalBasin = 
                 adjacent x y heightMap
                 |> Array.filter (fun (r, c) -> heightMap[r][c] <> 9)
-                |> Array.sumBy (fun (r, c) -> countOfBasins r c heightMap)
+                |> Array.fold (fun b (r, c) -> expandBasin heightMap b r c) curBasin
 
-            sum + 1
+            finalBasin
        
     let solve heightMap = 
         let lowPoints = getLowPoints heightMap
-        let mutable total: int list = []
+        let initBasin = Set<int * int> []
+        let expand = expandBasin heightMap initBasin
+        let counts = 
+            lowPoints
+            |> Array.map (fun (x, y) -> expand x y)
+            |> Array.map (fun s -> s |> Set.count)
 
-        for (x, y) in lowPoints do
-            let count = countOfBasins x y heightMap
-            total <- count :: total
-            visited <- Set<int * int> []
-
-        total
-        |> List.sortDescending
-        |> List.take 3
-        |> List.reduce (fun c n -> c * n)
+        counts
+        |> Array.sortDescending
+        |> Array.take 3
+        |> Array.reduce (fun c n -> c * n)
 
     let result = solve TestData.hegihtMap
