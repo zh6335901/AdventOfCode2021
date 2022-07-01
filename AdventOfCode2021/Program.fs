@@ -36,5 +36,5 @@ printfn "%d" Puzzle16.result
 printfn "%d" Puzzle17.result
 printfn "%d" Puzzle18.result
 
-//printfn "%d" Puzzle19.result
+printfn "%d" Puzzle19.result
 printfn "%d" Puzzle20.result
