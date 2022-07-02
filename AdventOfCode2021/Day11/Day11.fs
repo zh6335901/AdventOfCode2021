@@ -52,11 +52,6 @@ let rec flash (levels: int array array) =
 
         flash nextLevels
 
-let getFlashCount levels = 
-    levels
-    |> Array.collect id
-    |> Array.sumBy (fun l -> if l = 0 then 1 else 0)
-
 let forward levels =  
     levels
     |> Array.map (fun ls -> ls |> Array.map (fun l -> l + 1))
@@ -64,6 +59,11 @@ let forward levels =
 let nextStep = forward >> flash
 
 module Puzzle21 = 
+    let getFlashCount levels = 
+        levels
+        |> Array.collect id
+        |> Array.sumBy (fun l -> if l = 0 then 1 else 0)
+
     let solve energyLevels times = 
         let mutable flashingCount = 0
         let mutable levels = energyLevels
