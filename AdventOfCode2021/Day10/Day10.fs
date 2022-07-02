@@ -28,9 +28,7 @@ module Puzzle19 =
     let solve (input: string[]) = 
         input 
         |> Array.map (fun l -> [], l.ToCharArray() |> List.ofArray)
-        |> Array.map (fun p -> score (fst p) (snd p))
-        |> Array.filter Option.isSome
-        |> Array.map Option.get
+        |> Array.choose (fun p -> score (fst p) (snd p))
         |> Array.sum
 
     let result = solve TestData.input
@@ -57,9 +55,7 @@ module Puzzle20 =
         let missings = 
             input
             |> Array.map (fun l -> [], l.ToCharArray() |> List.ofArray)
-            |> Array.map (fun p -> score (fst p) (snd p))
-            |> Array.filter Option.isSome
-            |> Array.map Option.get
+            |> Array.choose (fun p -> score (fst p) (snd p))
             |> Array.sort
 
         missings |> Array.item ((missings |> Array.length) / 2)
