@@ -27,12 +27,7 @@ module private Graph =
         strs
         |> Array.map (fun s -> s.Split('-'))
         |> Array.map (fun a -> Node.parse a[0], Node.parse a[1])
-        |> Array.map (
-            fun edge -> 
-                match edge with
-                | s, t when s <> Start && t <> End -> [| (s, t); (t, s) |]
-                | _ -> [| edge |]
-        )
+        |> Array.map (fun (s, t) -> [| (s, t); (t, s) |])
         |> Array.collect id
         |> Array.groupBy fst
         |> Array.map (fun (s, e) -> (s, e |> Seq.map snd |> Set.ofSeq))
@@ -45,8 +40,8 @@ module Puzzle23 =
         | SmallCave _ when visited |> Set.contains curNode -> 0
         | Start when visited |> Set.contains curNode -> 0
         | _ ->
-            let targets = Map.find curNode graph 
             let newVisited = visited.Add curNode
+            let targets = Map.tryFind curNode graph |> Option.defaultValue (Set []) 
 
             targets
             |> Set.toList
@@ -56,5 +51,33 @@ module Puzzle23 =
     let solve input = 
         let graph = Graph.parse input
         countPaths graph Start (Set<Node> [])
+
+    let result = solve TestData.input
+
+module Puzzle24 = 
+    let rec countPaths graph curNode visited hasTwice =
+        match curNode with
+        | End -> 1
+        | SmallCave _ when hasTwice && visited |> Set.contains curNode -> 0
+        | Start when visited |> Set.contains curNode -> 0
+        | _ ->
+            let hasTwice' = 
+                if hasTwice then true
+                else
+                    match curNode with
+                    | SmallCave _ -> curNode |> visited.Contains
+                    | _ -> false
+                
+            let newVisited = visited.Add curNode
+            let targets = Map.tryFind curNode graph |> Option.defaultValue (Set []) 
+
+            targets
+            |> Set.toList
+            |> List.map (fun t -> countPaths graph t newVisited hasTwice')
+            |> List.sum
+
+    let solve input = 
+        let graph = Graph.parse input
+        countPaths graph Start (Set<Node> []) false
 
     let result = solve TestData.input

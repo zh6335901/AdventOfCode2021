@@ -45,3 +45,4 @@ printfn "%d" Puzzle21.result
 printfn "%d" Puzzle22.result
 
 printfn "%d" Puzzle23.result
+printfn "%d" Puzzle24.result
