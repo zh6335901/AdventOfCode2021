@@ -4,8 +4,8 @@ open System
 open System.IO
 
 module private TestData = 
-    let splitStr (separtor: string) (str: string) 
-        = str.Split(separtor, StringSplitOptions.RemoveEmptyEntries) 
+    let splitStr (separtor: string) (str: string) = 
+        str.Split(separtor, StringSplitOptions.RemoveEmptyEntries) 
 
     let input = File.ReadAllText("Day13/input.txt")
     let inputParts = input |> splitStr "\r\n\r\n"
