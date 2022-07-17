@@ -61,3 +61,4 @@ printfn "%d" Puzzle29.result
 printfn "%d" Puzzle30.result
 
 printfn "%d" Puzzle31.result
+printfn "%d" Puzzle32.result

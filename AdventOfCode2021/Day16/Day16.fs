@@ -10,9 +10,29 @@ module private TestData =
         |> Array.map (fun c -> Convert.ToString(Convert.ToInt64(c.ToString(), 16), 2).PadLeft(4, '0'))
         |> String.concat ""
 
+type OperatorType = 
+    | Sum
+    | Product
+    | Min
+    | Max
+    | GreaterThan
+    | LessThan
+    | EqualTo
+
+let parseOperatorType = 
+    function
+    | 0L -> Sum
+    | 1L -> Product
+    | 2L -> Min
+    | 3L -> Max
+    | 5L -> GreaterThan
+    | 6L -> LessThan
+    | 7L -> EqualTo
+    | _  -> failwith "unknown type"
+
 type Packet = 
     | Literal of {| Version: int64; Value: int64 |}
-    | Operator of {| Version: int64; Subpackets: Packet list |}
+    | Operator of {| Version: int64; Type: OperatorType; Subpackets: Packet list |}
 
 let binToDec (number: string) = Convert.ToInt64(number, 2)
 
@@ -44,7 +64,11 @@ let rec parsePacket text =
         Literal {| Version = version; Value = value |}, remain''
     else 
         let subpackets, remain'' = parseSubpackets remain'
-        Operator {| Version = version; Subpackets = subpackets |}, remain''
+        Operator 
+            {| Version = version; 
+               Type = parseOperatorType packetType; 
+               Subpackets = subpackets |}, 
+        remain''
 
 and parseSubpackets text = 
     let rec parseByTotalLength text = 
@@ -77,15 +101,45 @@ and parseSubpackets text =
         
         parseByNumOfPackets num remain'
 
-let rec sumOfVersions packet = 
-    match packet with
-    | Literal l -> l.Version
-    | Operator o -> o.Version + (o.Subpackets |> List.sumBy (fun sp -> sumOfVersions sp))
-
 module Puzzle31 = 
+    let rec sumOfVersions packet = 
+        match packet with
+        | Literal l -> l.Version
+        | Operator o -> o.Version + (o.Subpackets |> List.sumBy (fun sp -> sumOfVersions sp))
+
     let solve binaryText = 
         let packet, _ = parsePacket binaryText
 
         sumOfVersions packet
 
     let result = solve TestData.binaryText
+
+module Puzzle32 = 
+    let rec eval packet = 
+        let executeOp op subpackets = 
+            let subpacketVals = subpackets |> List.map eval
+
+            let compare subpacketVals comparer = 
+                let a, b = List.head subpacketVals, List.last subpacketVals 
+                in if (comparer a b) then 1 else 0
+
+            match op with
+            | Sum -> subpacketVals |> List.fold (+) 0L
+            | Product -> subpacketVals |> List.fold (*) 1L
+            | Min -> subpacketVals |> List.min
+            | Max -> subpacketVals |> List.max
+            | GreaterThan -> compare subpacketVals (>)
+            | LessThan -> compare subpacketVals (<)
+            | EqualTo -> compare subpacketVals (=)
+
+        match packet with 
+        | Literal l -> l.Value
+        | Operator o -> executeOp o.Type o.Subpackets
+
+    let solve binaryText = 
+        let packet, _ = parsePacket binaryText
+
+        eval packet
+
+    let result = solve TestData.binaryText
+            
