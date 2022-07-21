@@ -56,4 +56,3 @@ module Puzzle33 =
 module Puzzle34 = 
     let solve area = find area |> Seq.length
     let result = solve TestData.area
-
