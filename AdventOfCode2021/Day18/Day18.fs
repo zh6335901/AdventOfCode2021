@@ -101,16 +101,33 @@ module private SnailFishNumber =
     let add fishNum1 fishNum2 = 
         Pair (fishNum1, fishNum2) |> reduce
 
-module Puzzle35 = 
     let rec evalSum fishNum = 
         match fishNum with
         | Regular n -> n
         | Pair (n1, n2) -> 3 * (evalSum n1) + 2 * (evalSum n2)
 
+module Puzzle35 = 
     let solve input = 
         input
         |> Array.map SnailFishNumber.parse
         |> Array.reduce SnailFishNumber.add
-        |> evalSum
+        |> SnailFishNumber.evalSum
+
+    let result = solve TestData.input
+
+module Puzzle36 = 
+    let solve (input: string array) = 
+        let tail = input.Length - 1
+
+        [for i in 0..tail do
+            for j in 0..tail -> 
+                if i = j then 
+                    None 
+                else
+                    let fishNum1 = SnailFishNumber.parse input[i]
+                    let fishNum2 = SnailFishNumber.parse input[j]
+                    SnailFishNumber.add fishNum1 fishNum2 |> SnailFishNumber.evalSum |> Some]
+        |> Seq.choose id
+        |> Seq.max
 
     let result = solve TestData.input
